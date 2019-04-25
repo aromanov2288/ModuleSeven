@@ -32,6 +32,10 @@ public class IntegrationConfig {
         return MessageChannels.direct().datatype(CreditDocument.class).get();
     }
 
+    public DirectChannel toDBSS() {
+        return MessageChannels.direct().datatype(CreditDocument.class).get();
+    }
+
     @Bean
     public IntegrationFlow flow() {
         return IntegrationFlows
@@ -51,10 +55,16 @@ public class IntegrationConfig {
                                                         .subFlowMapping(ApprovalStatus.APPROVED, sfTwo -> sfTwo
                                                                 .channel("toFRAS")
                                                                 .handle("financialRiskAnalysisServiceImpl", "analyze")
+                                                                .channel("toDBSS")
+                                                                .handle("dbSavingServiceImpl", "save")
                                                                 .channel("fromBank"))
                                                         .subFlowMapping(ApprovalStatus.NOT_APPROVED, sfTwo -> sfTwo
+                                                                .channel("toDBSS")
+                                                                .handle("dbSavingServiceImpl", "save")
                                                                 .channel("fromBank"))))
                                 .subFlowMapping(ApprovalStatus.NOT_APPROVED, sfOne -> sfOne
+                                        .channel("toDBSS")
+                                        .handle("dbSavingServiceImpl", "save")
                                         .channel("fromBank"))
                 ).get();
     }
