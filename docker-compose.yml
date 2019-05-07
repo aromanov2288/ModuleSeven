@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+  postgres-db:
+    image: postgres:11.2
+    restart: on-failure
+    environment:
+      - POSTGRES_DB=credit_service
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+  application:
+    image: bank-service
+    restart: on-failure
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/credit_service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres-db
+    ports:
+      - 8080:8080
+volumes:
+  postgres-db-volume:
+    name: pgdata
+    driver: local
+    external: false
