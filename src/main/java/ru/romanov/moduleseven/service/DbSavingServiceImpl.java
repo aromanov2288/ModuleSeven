@@ -1,5 +1,6 @@
 package ru.romanov.moduleseven.service;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.romanov.moduleseven.domain.CreditDocument;
@@ -17,9 +18,15 @@ public class DbSavingServiceImpl implements DbSavingService {
         this.repository = repository;
     }
 
+    @HystrixCommand(fallbackMethod = "errorSave")
     @Override
     public CreditDocument save(CreditDocument creditDocument) {
         creditDocument.setSaveTime(Calendar.getInstance());
         return repository.save(creditDocument);
+    }
+
+    @Override
+    public CreditDocument errorSave(CreditDocument creditDocument) {
+        return creditDocument;
     }
 }

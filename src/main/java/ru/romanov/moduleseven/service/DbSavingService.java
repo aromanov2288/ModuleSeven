@@ -5,4 +5,6 @@ import ru.romanov.moduleseven.domain.CreditDocument;
 public interface DbSavingService {
 
     CreditDocument save(CreditDocument creditDocument);
+
+    CreditDocument errorSave(CreditDocument creditDocument);
 }
