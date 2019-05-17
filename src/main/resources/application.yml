@@ -23,5 +23,6 @@ management:
         include:
           - health
           - logfile
+          - hystrix.stream
 logging:
   file: target/app.log
